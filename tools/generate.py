@@ -15,7 +15,7 @@ Each violet-tinted colour N in Purple wave is fitted as a*violet + (1-a)*grey
 (Anchor's color-mix formula) and rebuilt as a*accent + (1-a)*grey. The script
 then adds what follows from those colours to every theme, Purple wave
 included: the halftone wave background (src/wave.svg) and Home Assistant's
-newer design tokens (primary scale, form fields, disabled states).
+newer design tokens (primary and neutral scales, form fields, text, surfaces).
 """
 import re
 from pathlib import Path
@@ -162,19 +162,13 @@ BLACK, WHITE = (3, 2, 6), (255, 255, 255)
 SCALE = [('05', .14, BLACK), ('10', .25, BLACK), ('20', .40, BLACK), ('30', .75, BLACK), ('40', 1, WHITE),
          ('50', .80, WHITE), ('60', .65, WHITE), ('70', .50, WHITE), ('80', .30, WHITE), ('90', .15, WHITE),
          ('95', .07, WHITE)]
-# Home Assistant's neutral greys and which step each disabled token uses
-# (light, dark), as in src/resources/theme/color/semantic.globals.ts, tinted with the accent
+# Home Assistant's neutral grey scale (src/resources/theme/color/core.globals.ts).
+# Re-emitted tinted with the accent, so every token HA builds from it follows:
+# disabled states, neutral button fills, surfaces, tooltips, toasts, focus ring.
 NEUTRAL = {'05': 0x14, '10': 0x20, '20': 0x36, '30': 0x4a, '40': 0x5e, '50': 0x7a, '60': 0x98,
            '70': 0xb1, '80': 0xcc, '90': 0xe6, '95': 0xf3}
-DISABLED = {
-    'fill-disabled-quiet-resting': ('95', '10'), 'fill-disabled-quiet-hover': ('90', '20'),
-    'fill-disabled-normal-resting': ('95', '20'), 'fill-disabled-normal-hover': ('90', '30'),
-    'fill-disabled-loud-resting': ('80', '30'), 'fill-disabled-loud-hover': ('70', '40'),
-    'on-disabled-quiet': ('80', '40'), 'on-disabled-normal': ('70', '50'), 'on-disabled-loud': ('95', '50'),
-    # neutral buttons; normal-active is also the pressed fill of icon buttons
-    'fill-neutral-normal-resting': ('90', '10'), 'fill-neutral-normal-hover': ('80', '20'),
-    'fill-neutral-normal-active': ('90', '10'),
-}
+# HA's scrollbar grey per mode
+SCROLLBAR = {'light': 0xc2, 'dark': 0x6e}
 # The wave: dot and top-glow opacity per mode, as Purple wave was tuned
 WAVE_OPACITY = {'light': (0.06, 0.08), 'dark': (0.08, 0.12)}
 
@@ -206,10 +200,19 @@ def tokens(s):
             out += [f'{ind}ha-color-primary-{step}: "#{t2h(mix(prim, base, p))}"' for step, p, base in SCALE]
             loud = '#ffffff' if mode == 'light' else g('primary-background-color')
             out.append(f'{ind}ha-color-on-primary-loud: "{loud}"')
+            scale = {step: mix(prim, base, p) for step, p, base in SCALE}
+            # older pages (storage bars, Thread, Z-Wave, maps) otherwise show HA's default blue
+            out.append(f'{ind}light-primary-color: "#{t2h(scale["80"])}"')
+            out.append(f'{ind}dark-primary-color: "#{t2h(scale["30"])}"')
             p = 0.10 if mode == 'light' else 0.15
-            for tok, steps in DISABLED.items():
-                n = NEUTRAL[steps[0 if mode == 'light' else 1]]
-                out.append(f'{ind}ha-color-{tok}: "#{t2h(mix(prim, (n, n, n), p))}"')
+            out += [f'{ind}ha-color-neutral-{step}: "#{t2h(mix(prim, (n, n, n), p))}"' for step, n in NEUTRAL.items()]
+            sb = SCROLLBAR[mode]
+            out.append(f'{ind}scrollbar-thumb-color: "#{t2h(mix(prim, (sb, sb, sb), p))}"')
+        elif re.match(r'\s+secondary-text-color:', line):
+            out += [f'{ind}ha-color-text-primary: "{g("primary-text-color")}"',
+                    f'{ind}ha-color-text-secondary: "{g("secondary-text-color")}"']
+        elif re.match(r'\s+card-background-color:', line):
+            out.append(f'{ind}ha-color-surface-default: "{g("card-background-color")}"')
         elif re.match(r'\s+secondary-background-color:', line):
             out.append(f'{ind}lovelace-background: "{wave(mode, prim, g("primary-background-color"))}"')
         elif re.match(r'\s+input-fill-color:', line):
