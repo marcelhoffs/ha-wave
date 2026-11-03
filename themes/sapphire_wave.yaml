@@ -78,6 +78,7 @@ Sapphire wave:
       app-header-background-color: "#f1f3fa"
       app-header-text-color: "#0a122b"
       app-header-border-bottom: "1px solid rgba(17,47,130,0.07)"
+      app-header-selection-bar-color: "#1d4ed8"
 
       # Sidebar
       sidebar-background-color: "#f8fafe"
@@ -192,6 +193,7 @@ Sapphire wave:
       app-header-background-color: "#080d16"
       app-header-text-color: "#e3ebf5"
       app-header-border-bottom: "1px solid rgba(147,197,253,0.06)"
+      app-header-selection-bar-color: "#60a5fa"
 
       # Sidebar
       sidebar-background-color: "#09111c"

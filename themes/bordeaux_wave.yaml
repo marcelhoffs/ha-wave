@@ -78,6 +78,7 @@ Bordeaux wave:
       app-header-background-color: "#f6f1f3"
       app-header-text-color: "#1b0a10"
       app-header-border-bottom: "1px solid rgba(76,17,38,0.07)"
+      app-header-selection-bar-color: "#7f1d3f"
 
       # Sidebar
       sidebar-background-color: "#fbf8f9"
@@ -192,6 +193,7 @@ Bordeaux wave:
       app-header-background-color: "#120c10"
       app-header-text-color: "#f2e9ec"
       app-header-border-bottom: "1px solid rgba(245,205,217,0.06)"
+      app-header-selection-bar-color: "#e092ac"
 
       # Sidebar
       sidebar-background-color: "#190f12"

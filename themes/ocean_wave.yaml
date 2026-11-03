@@ -78,6 +78,7 @@ Ocean wave:
       app-header-background-color: "#f0f5f7"
       app-header-text-color: "#051721"
       app-header-border-bottom: "1px solid rgba(2,63,97,0.07)"
+      app-header-selection-bar-color: "#0369a1"
 
       # Sidebar
       sidebar-background-color: "#f7fafc"
@@ -192,6 +193,7 @@ Ocean wave:
       app-header-background-color: "#040f16"
       app-header-text-color: "#dfeef5"
       app-header-border-bottom: "1px solid rgba(186,230,253,0.06)"
+      app-header-selection-bar-color: "#38bdf8"
 
       # Sidebar
       sidebar-background-color: "#04141c"

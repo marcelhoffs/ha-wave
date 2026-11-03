@@ -78,6 +78,7 @@ Emerald wave:
       app-header-background-color: "#f0f5f4"
       app-header-text-color: "#051a14"
       app-header-border-bottom: "1px solid rgba(2,72,52,0.07)"
+      app-header-selection-bar-color: "#047857"
 
       # Sidebar
       sidebar-background-color: "#f7fbfa"
@@ -192,6 +193,7 @@ Emerald wave:
       app-header-background-color: "#04110e"
       app-header-text-color: "#def1ea"
       app-header-border-bottom: "1px solid rgba(167,243,208,0.06)"
+      app-header-selection-bar-color: "#34d399"
 
       # Sidebar
       sidebar-background-color: "#031710"
