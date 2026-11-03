@@ -1,0 +1,225 @@
+"""Generate the Wave themes from themes/purple_wave.yaml.
+
+Purple wave is the hand-tuned source. Every other theme is derived from it
+using the accent colours of Anchor's Wave style (internal/web/static/style.css
+in https://github.com/marcelhoffs/anchor):
+
+  python tools/generate.py            # regenerate every theme
+  python tools/generate.py ocean      # regenerate one theme
+
+To add a theme, add an entry to THEMES and run the script. Edit only
+purple_wave.yaml by hand; the other files are overwritten.
+
+Each violet-tinted colour N in Purple wave is fitted as a*violet + (1-a)*grey
+(Anchor's color-mix formula) and rebuilt as a*accent + (1-a)*grey. The script
+also writes Home Assistant's newer design tokens (primary scale, form fields,
+disabled states) into every theme, Purple wave included.
+"""
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent / 'themes'
+SOURCE = ROOT / 'purple_wave.yaml'
+
+# light/dark: Anchor's --tint-light/--tint-dark; bgl/bgd: its wave --bg.
+# accl/accd: secondary accent; covl/covd: cover colour.
+THEMES = {
+    'sapphire': dict(title='Sapphire wave', light='1d4ed8', dark='60a5fa', bgl='f1f3fa', bgd='080d16',
+                     accl='3b82f6', accd='93c5fd', covl='2563eb', covd='93c5fd',
+                     cl='Accent (sapphire blue)', cd='Accent (soft sapphire)', nl='blue-tinted', nd='deep navy-tinted',
+                     # climate "cool" would equal the accent
+                     cool=('0ea5e9', '38bdf8')),
+    'emerald': dict(title='Emerald wave', light='047857', dark='34d399', bgl='f0f5f4', bgd='04110e',
+                    accl='059669', accd='6ee7b7', covl='0d9488', covd='a7f3d0',
+                    cl='Accent (emerald green)', cd='Accent (soft emerald)', nl='green-tinted', nd='deep forest-tinted'),
+    'bordeaux': dict(title='Bordeaux wave', light='7f1d3f', dark='e092ac', bgl='f6f1f3', bgd='120c10',
+                     accl='a3365e', accd='ecb3c6', covl='9f1239', covd='f5cdd9',
+                     cl='Accent (bordeaux red)', cd='Accent (soft bordeaux)', nl='rose-tinted', nd='deep wine-tinted'),
+    'ocean': dict(title='Ocean wave', light='0369a1', dark='38bdf8', bgl='f0f5f7', bgd='040f16',
+                  accl='0284c7', accd='7dd3fc', covl='0891b2', covd='bae6fd',
+                  cl='Accent (ocean blue)', cd='Accent (soft ocean)', nl='sea-tinted', nd='deep sea-tinted'),
+}
+
+MODE_RE = re.compile(r'\s{4}(light|dark):')
+
+
+def h2t(h):
+    h = h.lstrip('#')
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def t2h(t):
+    return ''.join(f'{max(0, min(255, round(c))):02x}' for c in t)
+
+
+def mix(a, b, p):
+    return tuple(p * x + (1 - p) * y for x, y in zip(a, b))
+
+
+def modes(lines):
+    """Yield (mode, line), mode being None above the modes block."""
+    mode = None
+    for line in lines:
+        m = MODE_RE.match(line)
+        if m:
+            mode = m.group(1)
+        yield mode, line
+
+
+def values(lines):
+    """{(mode, key): value} for the quoted colour values in each mode."""
+    vals = {}
+    for mode, line in modes(lines):
+        m = re.match(r'\s+([a-z0-9_-]+): "(#[0-9a-f]{6}|rgba?\([^)]*\))"', line)
+        if m and mode:
+            vals[(mode, m.group(1))] = m.group(2)
+    return vals
+
+
+# ---------------------------------------------------------------- derive
+
+VIOLET = {'light': (124, 92, 246), 'dark': (167, 139, 250)}
+KEEP = {'d946ef', 'e879f9', '6366f1', '818cf8'}  # fuchsia/indigo state colours stay
+SHADE = {(76, 29, 149): 0.6, (46, 16, 101): 0.4}  # violet darkened toward black
+
+
+def violetish(t):
+    return t2h(t) not in KEEP and max(t) - min(t) > 3 and t[2] >= t[0] >= t[1] - 8
+
+
+def derive(src, T):
+    tint = {'light': h2t(T['light']), 'dark': h2t(T['dark'])}
+    explicit = {
+        ('light', '7c5cf6'): T['light'], ('dark', 'a78bfa'): T['dark'],
+        ('light', 'a855f7'): T['accl'], ('dark', 'c084fc'): T['accd'],
+        ('light', '8b5cf6'): T['covl'], ('dark', 'c4b5fd'): T['covd'],
+        ('light', 'f6f4fb'): T['bgl'], ('dark', '0e0b16'): T['bgd'],
+    }
+
+    def refit(n, mode):
+        if n in SHADE:
+            return tuple(SHADE[n] * t for t in tint[mode])
+        v = VIOLET[mode]
+        # least squares for n ≈ u*v + w*(1,1,1)
+        sv, svv, sn, svn = sum(v), sum(x * x for x in v), sum(n), sum(a * b for a, b in zip(v, n))
+        det = svv * 3 - sv * sv
+        u = max(0.0, min(1.0, (svn * 3 - sv * sn) / det))
+        w = (svv * sn - sv * svn) / det
+        return tuple(u * t + w for t in tint[mode])
+
+    out = []
+    for mode, line in modes(src.split('\n')):
+        if mode:
+            def hexsub(m):
+                h = m.group(2).lower()
+                if (mode, h) in explicit:
+                    return m.group(1) + explicit[(mode, h)]
+                t = h2t(h)
+                return m.group(1) + (t2h(refit(t, mode)) if violetish(t) else h)
+
+            line = re.sub(r'(%23|#)([0-9a-fA-F]{6})', hexsub, line)
+            if 'lovelace-background' in line:
+                line = re.sub(r'rgba\((\d+), (\d+), (\d+),',
+                              lambda m: 'rgba(%s,' % ', '.join(map(str, tint[mode])), line)
+            else:
+                def rgbsub(m):
+                    t = tuple(int(x) for x in re.split(r',\s*', m.group(2)))
+                    if (mode, t2h(t)) in explicit:
+                        nt = h2t(explicit[(mode, t2h(t))])
+                    elif violetish(t):
+                        nt = tuple(round(c) for c in refit(t, mode))
+                    else:
+                        return m.group(0)
+                    return m.group(1) + (', ' if ', ' in m.group(2) else ',').join(map(str, nt))
+
+                line = re.sub(r'(rgba?\(|"(?=\d+, \d+, \d+"))(\d+,\s*\d+,\s*\d+)', rgbsub, line)
+        out.append(line)
+
+    s = '\n'.join(out)
+    fn = T['title'].lower().replace(' ', '_')
+    s = s.replace('Purple wave', T['title']).replace('purple_wave', fn)
+    s = s.replace('# Accent (indigo / violet)', '# ' + T['cl']).replace('# Accent (soft violet)', '# ' + T['cd'])
+    s = s.replace('lavender-tinted', T['nl']).replace('deep plum-tinted', T['nd'])
+    if 'cool' in T:
+        s = s.replace('state-climate-cool-color: "#3b82f6"', f'state-climate-cool-color: "#{T["cool"][0]}"')
+        s = s.replace('state-climate-cool-color: "#60a5fa"', f'state-climate-cool-color: "#{T["cool"][1]}"')
+    return s
+
+
+# ------------------------------------------------- Home Assistant tokens
+
+BLACK, WHITE = (3, 2, 6), (255, 255, 255)
+# --ha-color-primary-NN, used by ha-button and other newer controls; 40 = accent
+SCALE = [('05', .14, BLACK), ('10', .25, BLACK), ('20', .40, BLACK), ('30', .75, BLACK), ('40', 1, WHITE),
+         ('50', .80, WHITE), ('60', .65, WHITE), ('70', .50, WHITE), ('80', .30, WHITE), ('90', .15, WHITE),
+         ('95', .07, WHITE)]
+# Home Assistant's neutral greys and which step each disabled token uses
+# (light, dark), as in src/resources/theme/color/semantic.globals.ts
+NEUTRAL = {'05': 0x14, '10': 0x20, '20': 0x36, '30': 0x4a, '40': 0x5e, '50': 0x7a, '60': 0x98,
+           '70': 0xb1, '80': 0xcc, '90': 0xe6, '95': 0xf3}
+DISABLED = {
+    'fill-disabled-quiet-resting': ('95', '10'), 'fill-disabled-quiet-hover': ('90', '20'),
+    'fill-disabled-normal-resting': ('95', '20'), 'fill-disabled-normal-hover': ('90', '30'),
+    'fill-disabled-loud-resting': ('80', '30'), 'fill-disabled-loud-hover': ('70', '40'),
+    'on-disabled-quiet': ('80', '40'), 'on-disabled-normal': ('70', '50'), 'on-disabled-loud': ('95', '50'),
+}
+GENERATED = re.compile(r'\s*(# Buttons & controls|ha-color-primary-\d\d:|ha-color-on-primary-loud:|'
+                       r'ha-color-(fill|on)-disabled-|ha-color-form-background|ha-color-border-neutral-)')
+
+
+def tokens(s):
+    lines = s.split('\n')
+    lines = [l for l in lines if not GENERATED.match(l)]
+    # drop the blank line the button block leaves behind
+    lines = [l for i, l in enumerate(lines)
+             if not (l == '' and i > 0 and re.match(r'\s+mdc-theme-secondary:', lines[i - 1])
+                     and i + 1 < len(lines) and lines[i + 1] == '')]
+    vals = values(lines)
+    out = []
+    for mode, line in modes(lines):
+        out.append(line)
+        if not mode:
+            continue
+        ind = re.match(r'\s*', line).group(0)
+        g = lambda k: vals[(mode, k)]
+        prim = h2t(g('primary-color'))
+        if re.match(r'\s+mdc-theme-secondary:', line):
+            out += ['', ind + '# Buttons & controls (Home Assistant primary scale, 40 = accent)']
+            out += [f'{ind}ha-color-primary-{step}: "#{t2h(mix(prim, base, p))}"' for step, p, base in SCALE]
+            loud = '#ffffff' if mode == 'light' else g('primary-background-color')
+            out.append(f'{ind}ha-color-on-primary-loud: "{loud}"')
+            p = 0.10 if mode == 'light' else 0.15
+            for tok, steps in DISABLED.items():
+                n = NEUTRAL[steps[0 if mode == 'light' else 1]]
+                out.append(f'{ind}ha-color-{tok}: "#{t2h(mix(prim, (n, n, n), p))}"')
+        elif re.match(r'\s+mdc-text-field-fill-color:', line):
+            fill = h2t(g('input-fill-color'))
+            hover = mix(prim, fill, 0.06 if mode == 'dark' else 0.04)
+            out += [f'{ind}ha-color-form-background: "{g("input-fill-color")}"',
+                    f'{ind}ha-color-form-background-hover: "#{t2h(hover)}"',
+                    f'{ind}ha-color-form-background-disabled: "{g("secondary-background-color")}"',
+                    f'{ind}ha-color-border-neutral-quiet: "{g("divider-color")}"',
+                    f'{ind}ha-color-border-neutral-normal: "{g("disabled-text-color")}"',
+                    f'{ind}ha-color-border-neutral-loud: "{g("secondary-text-color")}"']
+    return '\n'.join(out)
+
+
+def write(path, s):
+    path.write_text(s, encoding='utf-8', newline='')
+    print('wrote', path.relative_to(ROOT.parent))
+
+
+def main(names):
+    unknown = set(names) - set(THEMES)
+    if unknown:
+        sys.exit(f'unknown theme(s): {", ".join(sorted(unknown))}; known: {", ".join(THEMES)}')
+    src = tokens(SOURCE.read_text(encoding='utf-8'))
+    write(SOURCE, src)
+    for name in names or THEMES:
+        T = THEMES[name]
+        write(ROOT / (T['title'].lower().replace(' ', '_') + '.yaml'), tokens(derive(src, T)))
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

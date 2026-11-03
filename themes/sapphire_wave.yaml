@@ -58,7 +58,6 @@ Sapphire wave:
       ha-color-on-disabled-normal: "#a2a7b5"
       ha-color-on-disabled-loud: "#dee3f0"
 
-
       # Surfaces (blue-tinted neutrals)
       primary-background-color: "#f1f3fa"
       secondary-background-color: "#e8ebf5"
@@ -172,7 +171,6 @@ Sapphire wave:
       ha-color-on-disabled-quiet: "#5e6975"
       ha-color-on-disabled-normal: "#76808d"
       ha-color-on-disabled-loud: "#76808d"
-
 
       # Surfaces (deep navy-tinted neutrals)
       primary-background-color: "#080d16"

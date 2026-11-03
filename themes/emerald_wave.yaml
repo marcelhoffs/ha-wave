@@ -58,7 +58,6 @@ Emerald wave:
       ha-color-on-disabled-normal: "#a0aba8"
       ha-color-on-disabled-loud: "#dbe7e3"
 
-
       # Surfaces (green-tinted neutrals)
       primary-background-color: "#f0f5f4"
       secondary-background-color: "#e6eeec"
@@ -172,7 +171,6 @@ Emerald wave:
       ha-color-on-disabled-quiet: "#587067"
       ha-color-on-disabled-normal: "#70877f"
       ha-color-on-disabled-loud: "#70877f"
-
 
       # Surfaces (deep forest-tinted neutrals)
       primary-background-color: "#04110e"

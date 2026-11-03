@@ -8,6 +8,7 @@ Themes for [Home Assistant](https://www.home-assistant.io/), each with a light a
 | **Sapphire wave** | `#1d4ed8` | `#60a5fa` |
 | **Emerald wave** | `#047857` | `#34d399` |
 | **Bordeaux wave** | `#7f1d3f` | `#e092ac` |
+| **Ocean wave** | `#0369a1` | `#38bdf8` |
 
 The palettes match the Wave style of [Anchor](https://github.com/marcelhoffs/anchor).
 
@@ -34,6 +35,17 @@ The palettes match the Wave style of [Anchor](https://github.com/marcelhoffs/anc
 ### Manual
 
 Copy the files from `themes/` into the `themes` folder of your Home Assistant configuration directory, then follow steps 5–7 above.
+
+## Regenerating the themes
+
+`themes/purple_wave.yaml` is the hand-tuned source. The other themes are generated from it with Anchor's accent colours:
+
+```sh
+python tools/generate.py          # regenerate every theme
+python tools/generate.py ocean    # regenerate one theme
+```
+
+Edit only `purple_wave.yaml` by hand. To add a theme, add an entry to `THEMES` in `tools/generate.py` and run it.
 
 ## License
 

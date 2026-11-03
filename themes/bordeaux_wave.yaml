@@ -58,7 +58,6 @@ Bordeaux wave:
       ha-color-on-disabled-normal: "#aca2a6"
       ha-color-on-disabled-loud: "#e7dee1"
 
-
       # Surfaces (rose-tinted neutrals)
       primary-background-color: "#f6f1f3"
       secondary-background-color: "#efe8ea"
@@ -172,7 +171,6 @@ Bordeaux wave:
       ha-color-on-disabled-quiet: "#72666a"
       ha-color-on-disabled-normal: "#897e82"
       ha-color-on-disabled-loud: "#897e82"
-
 
       # Surfaces (deep wine-tinted neutrals)
       primary-background-color: "#120c10"
