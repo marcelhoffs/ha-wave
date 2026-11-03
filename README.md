@@ -54,20 +54,21 @@ The palettes match the Wave style of [Anchor](https://github.com/marcelhoffs/anc
 6. Restart Home Assistant (or run the `frontend.reload_themes` action).
 7. Go to your **Profile** and select one of the Wave themes. Set the mode to *Auto* to follow your device’s light/dark setting.
 
+HACS installs the themes in `config/themes/wave_themes/`. If you installed version 1.0.0, delete the old `config/themes/sapphire_wave/` folder.
+
 ### Manual
 
-Copy the files from `themes/` into the `themes` folder of your Home Assistant configuration directory, then follow steps 5–7 above.
+Copy `themes/wave_themes.yaml` into the `themes` folder of your Home Assistant configuration directory, then follow steps 5–7 above.
 
 ## Regenerating the themes
 
-`themes/purple_wave.yaml` is the hand-tuned source. The other themes are generated from it with Anchor's accent colours:
+`src/purple_wave.yaml` is the hand-tuned source. The other themes are generated from it with Anchor's accent colours, and all five are written to `themes/wave_themes.yaml`:
 
 ```sh
-python tools/generate.py          # regenerate every theme
-python tools/generate.py ocean    # regenerate one theme
+python tools/generate.py
 ```
 
-Edit only `purple_wave.yaml` by hand. To add a theme, add an entry to `THEMES` in `tools/generate.py` and run it.
+Edit only `src/purple_wave.yaml` by hand. To add a theme, add an entry to `THEMES` in `tools/generate.py` and run it.
 
 ## License
 

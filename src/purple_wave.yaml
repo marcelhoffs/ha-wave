@@ -1,8 +1,5 @@
-# Purple wave theme for Home Assistant
-# Place in /config/themes/purple_wave.yaml
-# Requires in configuration.yaml:
-#   frontend:
-#     themes: !include_dir_merge_named themes
+# Purple wave theme for Home Assistant: the hand-tuned source of every Wave theme.
+# Edit this file, then run `python tools/generate.py` to rebuild themes/wave_themes.yaml.
 
 Purple wave:
   # ---- Typography ----
