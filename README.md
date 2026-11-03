@@ -12,7 +12,7 @@ Themes for [Home Assistant](https://www.home-assistant.io/), each with a light a
 
 The palettes match the Wave style of [Anchor](https://github.com/marcelhoffs/anchor).
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
 
 ## Screenshots
 
@@ -40,25 +40,38 @@ The palettes match the Wave style of [Anchor](https://github.com/marcelhoffs/anc
 
 ### HACS (recommended)
 
-1. Open HACS in Home Assistant.
-2. Open the menu (⋮) → **Custom repositories**.
-3. Add `https://github.com/marcelhoffs/ha-wave` with category **Theme**.
-4. Search for **Wave themes** and download it.
-5. Make sure themes are enabled in `configuration.yaml`:
+Wave themes is available in the default HACS store.
+
+[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=marcelhoffs&repository=ha-wave&category=theme)
+
+1. Open HACS in Home Assistant (or use the button above).
+2. Search for **Wave themes** and download it.
+3. Make sure themes are enabled in `configuration.yaml`:
 
    ```yaml
    frontend:
      themes: !include_dir_merge_named themes
    ```
 
-6. Restart Home Assistant (or run the `frontend.reload_themes` action).
-7. Go to your **Profile** and select one of the Wave themes. Set the mode to *Auto* to follow your device’s light/dark setting.
+4. Restart Home Assistant (or run the `frontend.reload_themes` action).
+5. Go to your **Profile** and select one of the Wave themes. Set the mode to *Auto* to follow your device’s light/dark setting.
+
+### HACS custom repository
+
+If Wave themes doesn't show up in your HACS store, add it as a custom repository:
+
+1. Open HACS in Home Assistant.
+2. Open the menu (⋮) → **Custom repositories**.
+3. Add `https://github.com/marcelhoffs/ha-wave` with category **Theme**.
+4. Search for **Wave themes** and download it, then follow steps 3–5 above.
+
+If you previously added Wave themes as a custom repository, you can remove that entry: HACS now picks it up from the default store.
 
 HACS installs the themes in `config/themes/wave_themes/`. If you installed version 1.0.0, delete the old `config/themes/sapphire_wave/` folder.
 
 ### Manual
 
-Copy `themes/wave_themes.yaml` into the `themes` folder of your Home Assistant configuration directory, then follow steps 5–7 above.
+Copy `themes/wave_themes.yaml` into the `themes` folder of your Home Assistant configuration directory, then follow steps 3–5 of the HACS installation above.
 
 ## Regenerating the themes
 
