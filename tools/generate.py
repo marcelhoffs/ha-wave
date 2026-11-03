@@ -218,6 +218,9 @@ def tokens(s):
                     f'{ind}ha-color-border-neutral-quiet: "{g("divider-color")}"',
                     f'{ind}ha-color-border-neutral-normal: "{g("disabled-text-color")}"',
                     f'{ind}ha-color-border-neutral-loud: "{g("secondary-text-color")}"']
+            # Menu item hover (Web Awesome dropdowns), accent-tinted instead of grey
+            menu = mix(prim, h2t(g('card-background-color')), 0.14 if mode == 'dark' else 0.08)
+            out.append(f'{ind}wa-color-neutral-fill-normal: "#{t2h(menu)}"')
     return '\n'.join(out)
 
 
