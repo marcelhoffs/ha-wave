@@ -14,6 +14,28 @@ The palettes match the Wave style of [Anchor](https://github.com/marcelhoffs/anc
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
+## Screenshots
+
+### Purple wave
+
+![Purple wave](https://raw.githubusercontent.com/marcelhoffs/ha-wave/main/images/purple_wave.webp)
+
+### Sapphire wave
+
+![Sapphire wave](https://raw.githubusercontent.com/marcelhoffs/ha-wave/main/images/sapphire_wave.webp)
+
+### Emerald wave
+
+![Emerald wave](https://raw.githubusercontent.com/marcelhoffs/ha-wave/main/images/emerald_wave.webp)
+
+### Bordeaux wave
+
+![Bordeaux wave](https://raw.githubusercontent.com/marcelhoffs/ha-wave/main/images/bordeaux_wave.webp)
+
+### Ocean wave
+
+![Ocean wave](https://raw.githubusercontent.com/marcelhoffs/ha-wave/main/images/ocean_wave.webp)
+
 ## Installation
 
 ### HACS (recommended)
