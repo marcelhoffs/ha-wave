@@ -163,7 +163,7 @@ SCALE = [('05', .14, BLACK), ('10', .25, BLACK), ('20', .40, BLACK), ('30', .75,
          ('50', .80, WHITE), ('60', .65, WHITE), ('70', .50, WHITE), ('80', .30, WHITE), ('90', .15, WHITE),
          ('95', .07, WHITE)]
 # Home Assistant's neutral greys and which step each disabled token uses
-# (light, dark), as in src/resources/theme/color/semantic.globals.ts
+# (light, dark), as in src/resources/theme/color/semantic.globals.ts, tinted with the accent
 NEUTRAL = {'05': 0x14, '10': 0x20, '20': 0x36, '30': 0x4a, '40': 0x5e, '50': 0x7a, '60': 0x98,
            '70': 0xb1, '80': 0xcc, '90': 0xe6, '95': 0xf3}
 DISABLED = {
@@ -171,6 +171,9 @@ DISABLED = {
     'fill-disabled-normal-resting': ('95', '20'), 'fill-disabled-normal-hover': ('90', '30'),
     'fill-disabled-loud-resting': ('80', '30'), 'fill-disabled-loud-hover': ('70', '40'),
     'on-disabled-quiet': ('80', '40'), 'on-disabled-normal': ('70', '50'), 'on-disabled-loud': ('95', '50'),
+    # neutral buttons; normal-active is also the pressed fill of icon buttons
+    'fill-neutral-normal-resting': ('90', '10'), 'fill-neutral-normal-hover': ('80', '20'),
+    'fill-neutral-normal-active': ('90', '10'),
 }
 # The wave: dot and top-glow opacity per mode, as Purple wave was tuned
 WAVE_OPACITY = {'light': (0.06, 0.08), 'dark': (0.08, 0.12)}

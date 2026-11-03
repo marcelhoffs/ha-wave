@@ -49,6 +49,9 @@ Purple wave:
       ha-color-on-disabled-quiet: "#c4c1d0"
       ha-color-on-disabled-normal: "#aca8b8"
       ha-color-on-disabled-loud: "#e7e4f3"
+      ha-color-fill-neutral-normal-resting: "#dbd8e8"
+      ha-color-fill-neutral-normal-hover: "#c4c1d0"
+      ha-color-fill-neutral-normal-active: "#dbd8e8"
 
       # Surfaces (lavender-tinted neutrals)
       primary-background-color: "#f6f4fb"
@@ -151,6 +154,9 @@ Purple wave:
       ha-color-on-disabled-quiet: "#696575"
       ha-color-on-disabled-normal: "#817d8d"
       ha-color-on-disabled-loud: "#817d8d"
+      ha-color-fill-neutral-normal-resting: "#343041"
+      ha-color-fill-neutral-normal-hover: "#474353"
+      ha-color-fill-neutral-normal-active: "#343041"
 
       # Surfaces (deep plum-tinted neutrals)
       primary-background-color: "#0e0b16"
@@ -268,6 +274,9 @@ Sapphire wave:
       ha-color-on-disabled-quiet: "#babfcd"
       ha-color-on-disabled-normal: "#a2a7b5"
       ha-color-on-disabled-loud: "#dee3f0"
+      ha-color-fill-neutral-normal-resting: "#d2d7e5"
+      ha-color-fill-neutral-normal-hover: "#babfcd"
+      ha-color-fill-neutral-normal-active: "#d2d7e5"
 
       # Surfaces (blue-tinted neutrals)
       primary-background-color: "#f1f3fa"
@@ -370,6 +379,9 @@ Sapphire wave:
       ha-color-on-disabled-quiet: "#5e6975"
       ha-color-on-disabled-normal: "#76808d"
       ha-color-on-disabled-loud: "#76808d"
+      ha-color-fill-neutral-normal-resting: "#2a3441"
+      ha-color-fill-neutral-normal-hover: "#3c4753"
+      ha-color-fill-neutral-normal-active: "#2a3441"
 
       # Surfaces (deep navy-tinted neutrals)
       primary-background-color: "#080d16"
@@ -487,6 +499,9 @@ Emerald wave:
       ha-color-on-disabled-quiet: "#b8c4c0"
       ha-color-on-disabled-normal: "#a0aba8"
       ha-color-on-disabled-loud: "#dbe7e3"
+      ha-color-fill-neutral-normal-resting: "#cfdbd8"
+      ha-color-fill-neutral-normal-hover: "#b8c4c0"
+      ha-color-fill-neutral-normal-active: "#cfdbd8"
 
       # Surfaces (green-tinted neutrals)
       primary-background-color: "#f0f5f4"
@@ -589,6 +604,9 @@ Emerald wave:
       ha-color-on-disabled-quiet: "#587067"
       ha-color-on-disabled-normal: "#70877f"
       ha-color-on-disabled-loud: "#70877f"
+      ha-color-fill-neutral-normal-resting: "#233b32"
+      ha-color-fill-neutral-normal-hover: "#364e45"
+      ha-color-fill-neutral-normal-active: "#233b32"
 
       # Surfaces (deep forest-tinted neutrals)
       primary-background-color: "#04110e"
@@ -706,6 +724,9 @@ Bordeaux wave:
       ha-color-on-disabled-quiet: "#c4babe"
       ha-color-on-disabled-normal: "#aca2a6"
       ha-color-on-disabled-loud: "#e7dee1"
+      ha-color-fill-neutral-normal-resting: "#dcd2d5"
+      ha-color-fill-neutral-normal-hover: "#c4babe"
+      ha-color-fill-neutral-normal-active: "#dcd2d5"
 
       # Surfaces (rose-tinted neutrals)
       primary-background-color: "#f6f1f3"
@@ -808,6 +829,9 @@ Bordeaux wave:
       ha-color-on-disabled-quiet: "#72666a"
       ha-color-on-disabled-normal: "#897e82"
       ha-color-on-disabled-loud: "#897e82"
+      ha-color-fill-neutral-normal-resting: "#3d3135"
+      ha-color-fill-neutral-normal-hover: "#504448"
+      ha-color-fill-neutral-normal-active: "#3d3135"
 
       # Surfaces (deep wine-tinted neutrals)
       primary-background-color: "#120c10"
@@ -925,6 +949,9 @@ Ocean wave:
       ha-color-on-disabled-quiet: "#b8c2c8"
       ha-color-on-disabled-normal: "#a0aaaf"
       ha-color-on-disabled-loud: "#dbe5eb"
+      ha-color-fill-neutral-normal-resting: "#cfdadf"
+      ha-color-fill-neutral-normal-hover: "#b8c2c8"
+      ha-color-fill-neutral-normal-active: "#cfdadf"
 
       # Surfaces (sea-tinted neutrals)
       primary-background-color: "#f0f5f7"
@@ -1027,6 +1054,9 @@ Ocean wave:
       ha-color-on-disabled-quiet: "#586c75"
       ha-color-on-disabled-normal: "#70848d"
       ha-color-on-disabled-loud: "#70848d"
+      ha-color-fill-neutral-normal-resting: "#243840"
+      ha-color-fill-neutral-normal-hover: "#364a53"
+      ha-color-fill-neutral-normal-active: "#243840"
 
       # Surfaces (deep sea-tinted neutrals)
       primary-background-color: "#040f16"
