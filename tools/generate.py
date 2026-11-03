@@ -13,14 +13,16 @@ themes/wave_themes.yaml is overwritten.
 
 Each violet-tinted colour N in Purple wave is fitted as a*violet + (1-a)*grey
 (Anchor's color-mix formula) and rebuilt as a*accent + (1-a)*grey. The script
-also writes Home Assistant's newer design tokens (primary scale, form fields,
-disabled states) into every theme, Purple wave included.
+then adds what follows from those colours to every theme, Purple wave
+included: the halftone wave background (src/wave.svg) and Home Assistant's
+newer design tokens (primary scale, form fields, disabled states).
 """
 import re
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 SOURCE = REPO / 'src' / 'purple_wave.yaml'
+WAVE = REPO / 'src' / 'wave.svg'
 OUTPUT = REPO / 'themes' / 'wave_themes.yaml'
 HEADER = """\
 # Wave themes for Home Assistant
@@ -128,22 +130,18 @@ def derive(src, T):
                 t = h2t(h)
                 return m.group(1) + (t2h(refit(t, mode)) if violetish(t) else h)
 
-            line = re.sub(r'(%23|#)([0-9a-fA-F]{6})', hexsub, line)
-            if 'lovelace-background' in line:
-                line = re.sub(r'rgba\((\d+), (\d+), (\d+),',
-                              lambda m: 'rgba(%s,' % ', '.join(map(str, tint[mode])), line)
-            else:
-                def rgbsub(m):
-                    t = tuple(int(x) for x in re.split(r',\s*', m.group(2)))
-                    if (mode, t2h(t)) in explicit:
-                        nt = h2t(explicit[(mode, t2h(t))])
-                    elif violetish(t):
-                        nt = tuple(round(c) for c in refit(t, mode))
-                    else:
-                        return m.group(0)
-                    return m.group(1) + (', ' if ', ' in m.group(2) else ',').join(map(str, nt))
+            def rgbsub(m):
+                t = tuple(int(x) for x in re.split(r',\s*', m.group(2)))
+                if (mode, t2h(t)) in explicit:
+                    nt = h2t(explicit[(mode, t2h(t))])
+                elif violetish(t):
+                    nt = tuple(round(c) for c in refit(t, mode))
+                else:
+                    return m.group(0)
+                return m.group(1) + (', ' if ', ' in m.group(2) else ',').join(map(str, nt))
 
-                line = re.sub(r'(rgba?\(|"(?=\d+, \d+, \d+"))(\d+,\s*\d+,\s*\d+)', rgbsub, line)
+            line = re.sub(r'(#)([0-9a-fA-F]{6})', hexsub, line)
+            line = re.sub(r'(rgba\()(\d+,\s*\d+,\s*\d+)', rgbsub, line)
         out.append(line)
 
     s = '\n'.join(out)
@@ -174,17 +172,23 @@ DISABLED = {
     'fill-disabled-loud-resting': ('80', '30'), 'fill-disabled-loud-hover': ('70', '40'),
     'on-disabled-quiet': ('80', '40'), 'on-disabled-normal': ('70', '50'), 'on-disabled-loud': ('95', '50'),
 }
-GENERATED = re.compile(r'\s*(# Buttons & controls|ha-color-primary-\d\d:|ha-color-on-primary-loud:|'
-                       r'ha-color-(fill|on)-disabled-|ha-color-form-background|ha-color-border-neutral-)')
+# The wave: dot and top-glow opacity per mode, as Purple wave was tuned
+WAVE_OPACITY = {'light': (0.06, 0.08), 'dark': (0.08, 0.12)}
+
+
+def wave(mode, prim, bg):
+    """lovelace-background: the halftone dots in the accent, a glow at the top and the page colour."""
+    dots, glow = WAVE_OPACITY[mode]
+    svg = re.sub(r'\s*\n\s*', '', WAVE.read_text(encoding='utf-8'))
+    svg = svg.replace("stroke='#000'", f"stroke='#{t2h(prim)}' stroke-opacity='{dots}'")
+    svg = svg.replace('#', '%23').replace('<', '%3C').replace('>', '%3E')
+    rgb = ', '.join(map(str, prim))
+    return (f'url(\\"data:image/svg+xml,{svg}\\") center / cover no-repeat, '
+            f'radial-gradient(1200px 420px at 50% -120px, rgba({rgb}, {glow}), transparent), {bg}')
 
 
 def tokens(s):
     lines = s.split('\n')
-    lines = [l for l in lines if not GENERATED.match(l)]
-    # drop the blank line the button block leaves behind
-    lines = [l for i, l in enumerate(lines)
-             if not (l == '' and i > 0 and re.match(r'\s+mdc-theme-secondary:', lines[i - 1])
-                     and i + 1 < len(lines) and lines[i + 1] == '')]
     vals = values(lines)
     out = []
     for mode, line in modes(lines):
@@ -194,7 +198,7 @@ def tokens(s):
         ind = re.match(r'\s*', line).group(0)
         g = lambda k: vals[(mode, k)]
         prim = h2t(g('primary-color'))
-        if re.match(r'\s+mdc-theme-secondary:', line):
+        if re.match(r'\s+accent-color:', line):
             out += ['', ind + '# Buttons & controls (Home Assistant primary scale, 40 = accent)']
             out += [f'{ind}ha-color-primary-{step}: "#{t2h(mix(prim, base, p))}"' for step, p, base in SCALE]
             loud = '#ffffff' if mode == 'light' else g('primary-background-color')
@@ -203,7 +207,9 @@ def tokens(s):
             for tok, steps in DISABLED.items():
                 n = NEUTRAL[steps[0 if mode == 'light' else 1]]
                 out.append(f'{ind}ha-color-{tok}: "#{t2h(mix(prim, (n, n, n), p))}"')
-        elif re.match(r'\s+mdc-text-field-fill-color:', line):
+        elif re.match(r'\s+secondary-background-color:', line):
+            out.append(f'{ind}lovelace-background: "{wave(mode, prim, g("primary-background-color"))}"')
+        elif re.match(r'\s+input-fill-color:', line):
             fill = h2t(g('input-fill-color'))
             hover = mix(prim, fill, 0.06 if mode == 'dark' else 0.04)
             out += [f'{ind}ha-color-form-background: "{g("input-fill-color")}"',
@@ -230,9 +236,8 @@ def body(s):
 
 
 def main():
-    src = tokens(SOURCE.read_text(encoding='utf-8'))
-    write(SOURCE, src)
-    themes = [body(src)] + [body(tokens(derive(src, T))) for T in THEMES.values()]
+    src = SOURCE.read_text(encoding='utf-8')
+    themes = [body(tokens(src))] + [body(tokens(derive(src, T))) for T in THEMES.values()]
     write(OUTPUT, HEADER + '\n' + '\n\n'.join(themes) + '\n')
 
 

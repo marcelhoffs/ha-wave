@@ -68,7 +68,7 @@ Copy `themes/wave_themes.yaml` into the `themes` folder of your Home Assistant c
 python tools/generate.py
 ```
 
-Edit only `src/purple_wave.yaml` by hand. To add a theme, add an entry to `THEMES` in `tools/generate.py` and run it.
+Edit only `src/purple_wave.yaml` (colours) and `src/wave.svg` (the halftone wave) by hand. The generator adds the wave background and Home Assistant's derived button, form-field and disabled-state colours to every theme. To add a theme, add an entry to `THEMES` in `tools/generate.py` and run it.
 
 ## License
 
